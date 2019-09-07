@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
 
+const version = 'v0.6.0';
+
 const DEFAULTWORDS = [
 	"rule",
 	"left",
@@ -54,10 +56,98 @@ class HangMan extends React.Component {
 	}
 }
 
+const Word = props => {
+	const {hiddenWord} = props;
+	return (
+		<ol className="app__word">
+			{hiddenWord.map((item, index) => {
+				return (
+					<li key={index} className={`app__letter ${(item) ? 'app__letter--ok':''}`}>
+						{item}
+					</li>
+				);
+			})}
+		</ol>
+	);
+};
+
+const UserControls = props => {
+	const {getUserKey, handleFieldClick, userKey, gameOver} = props;
+	return (
+		<div className="app__user">
+			<div className="app__user-field">
+				<input
+					className="app__user-letter" 
+					type="text" 
+					onChange={getUserKey} 
+					onClick={handleFieldClick} 
+					maxLength="1" 
+					value={userKey}
+					disabled={gameOver}
+				/>
+			</div>
+		</div>
+	);
+};
+
+const GameScreen = props => {
+	const {page, index, tries, hiddenWord, getUserKey, handleFieldClick, userKey, gameOver} = props;
+	return (
+		<div className={`app__screen app__screen--game ${(page === index) ? 'app__screen--active': ''}`}>
+			<HangMan rope={true} tries={tries} />
+			<div className="app__ui">
+				<Word
+					hiddenWord={hiddenWord}
+				/>
+				
+				<UserControls 
+					getUserKey={getUserKey}
+					handleFieldClick={handleFieldClick}
+					userKey={userKey}
+					gameOver={gameOver}
+				/>
+			</div>
+		</div>
+	);
+};
+
+const Screen = props => {
+	const {page, index, text, className, action} = props;
+	return (
+		<div className={`${className} ${(page === index) ? 'app__screen--active': ''}`} onClick={action}>{text}</div>
+	);
+};
+
+const SplashScreen = props => {
+	const {page, index, action} = props;
+	return (
+		<div className={`app__screen app__screen--splash ${(page === index) ? 'app__screen--active': ''}`}>
+			<h1 className="app__title">Mini Hangman</h1>
+			<div className="app__version">{version}</div>
+			<button className="app__button app__play" onClick={()=>{action(1)}}>Play</button>
+		</div>
+	);
+};
+
+class KoScreen extends React.Component {
+	render() {
+		const {page, index, action, word} = this.props;
+		return (
+			<div className={`app__screen app__screen--ko ${(page === index) ? 'app__screen--active': ''}`}>
+				<HangMan rope={false} tries={4} />
+				<h2 className="app__screen-title">Loser!</h2>
+				<div className="app__result">Word: {word.join('')}</div>
+				<button className="app__button app__play" onClick={()=>{action(1)}} data-next={1}>Play Again</button>
+			</div>
+		);
+	}
+};
+
 class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			page: 0,
 			totalTries: 4,
 			tries: 0,
 			word: [],
@@ -67,10 +157,30 @@ class App extends React.Component {
 			gameOver: false
 		};
 		this.getUserKey = this.getUserKey.bind(this);
+		this.gotoScreen = this.gotoScreen.bind(this);
+		this.resetGame = this.resetGame.bind(this);
 	}
-	
+
   componentDidMount() {
 		this.startGame();
+	}
+	
+	resetGame() {
+		this.setState({
+			page: 1,
+			tries: 0,
+			userKey: '',
+			userHistory: [],
+			gameOver: false
+		}, () => {
+			this.startGame();
+		});
+	}
+
+	gotoScreen(index) {
+		this.setState({
+			page: index
+		});
 	}
 
 	startGame() {
@@ -106,6 +216,11 @@ class App extends React.Component {
 
 				}
 				newHistory.push(key);
+				if (gameOver) {
+					setTimeout(()=>{
+						this.setState({page: 3});
+					}, 1000);
+				}
 				return {
 					tries: tries,
 					hiddenWord: newHiddenWord,
@@ -128,26 +243,36 @@ class App extends React.Component {
 	}
 
 	render() {
-		const {tries, userKey} = this.state;
+		const {tries, userKey, hiddenWord, page, gameOver, word} = this.state;
 		return (
 			<React.Fragment>
-				<HangMan rope={true} tries={tries} />
-				<div className="app__ui">
-					<div className="app__word">
-						{this.state.hiddenWord.map((item, index) => {
-							return (
-								<div key={index} className={`app__letter ${(item) ? 'app__letter--ok':''}`}>
-									{item}
-								</div>
-							);
-						})}
-					</div>
-					<div className="app__user">
-						<div className="app__user-field">
-							<input className="app__user-letter" type="text" onChange={this.getUserKey} onClick={this.emptyField} maxLength="1" value={userKey}/>
-						</div>
-					</div>
-				</div>
+				<SplashScreen 
+					page={page}
+					index={0}
+					action={this.gotoScreen}
+				/>
+				<GameScreen
+					page={page}
+					index={1}
+					tries={tries}
+					hiddenWord={hiddenWord}
+					userKey={userKey}
+					handleFieldClick={this.emptyField}
+					getUserKey={this.getUserKey}
+					gameOver={gameOver}
+				/>
+				<Screen 
+					page={page}
+					index={2}
+					text="ok" 
+					className="app__screen app__screen--ok"
+				/>
+				<KoScreen 
+					page={page}
+					index={3}
+					word={word}
+					action={this.resetGame}
+				/>
 			</React.Fragment>
 		);
 	}
