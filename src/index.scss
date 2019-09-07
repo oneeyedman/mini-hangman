@@ -74,6 +74,13 @@ body {
 		&::after {
 			top: 37px;
 		}
+		&.hangman__part--active {
+			color: $color_hangman;
+			&::after {
+				//opacity: .7;
+				background: $color_hangman_active;
+			}
+		}
 	}
 
 }
