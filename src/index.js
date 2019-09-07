@@ -160,7 +160,7 @@ class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			page: 2,
+			page: 0,
 			totalTries: 4,
 			lettersLeft: 0,
 			tries: 0,
