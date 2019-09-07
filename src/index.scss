@@ -1,0 +1,194 @@
+// VARS
+$color_bg: #414141;
+$color_line: #f3f4f5; 
+$color_hangman: mix($color_bg, $color_line, 75%);
+$color_hangman_active: $color_line;
+
+// COMMON
+body {
+	min-height: 100vh;
+	margin: 0;
+	font-family: arial, sans-serif;
+	background-color: $color_bg;
+}
+#area {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 100px;
+	height: 50px;
+	border: 1px solid $color_line;
+	transform: translate(-50%, -50%);
+}
+
+// APP
+.app {
+	display: grid;
+	grid-template-columns: 35px 65px;
+}
+.app__hangman {}
+.app__ui {
+	display: grid;
+	grid-template-rows: 1fr 1fr;
+	grid-gap: 4px;
+}
+
+// HANGMAN
+.hangman {
+	position: relative;
+	color: $color_hangman;
+}
+.hangman--with-rope {}
+.hangman__rope {
+	width: 0;
+	height: 10px;
+	border-left: 1px dashed currentColor;
+	left: 50%;
+	top: 0;
+	transform: translateX(-50%);
+	position: absolute;
+	margin-left: -1px;
+	z-index: 1;
+}
+.hangman__body {
+	position: absolute;
+	left: 50%;
+	top: 0;
+	transform: translateX(-50%);
+	z-index: 1;
+	&::after {
+		content: '';
+		position: absolute;
+		background: currentColor;
+		width: 20px;
+		height: 5px;
+		border-radius: 50%;
+		opacity: .3;
+		left: 50%;
+		top: 30px;
+		transform: translateX(-50%);
+		z-index: 1;
+	}
+	.hangman--with-rope & {
+		top: 5px;
+		&::after {
+			top: 37px;
+		}
+	}
+
+}
+.hangman__head {
+	left: 50%;
+	top: 0;
+	transform: translateX(-50%);
+	position: absolute;
+	font-size: 28px;
+	z-index: 3;
+	&::before {
+		content: 'O';
+	}
+}
+.hangman__face {
+	position: absolute;
+	left: 50%;
+	top: 0;
+	transform: translateX(-50%);
+	font-weight: 700;
+	margin-left: 1px;
+	color: $color_hangman_active;
+	&::before {
+		content: ':';
+		font-size: 10px;
+		position: absolute;
+		left: 50%;
+		top: 9px;
+		transform: translateX(-5%) rotate(90deg);
+	}
+	&::after {
+		content: '(';
+		font-size: 6px;
+		position: absolute;
+		left: 50%;
+		top: 15px;
+		transform: translateX(-30%) rotate(-90deg);
+	}
+}
+.hangman__face--sad {
+	&::after {
+		transform: translateX(-10%) rotate(90deg);
+	}
+}
+.hangman__part--active {
+	color: $color_hangman_active;
+}
+.hangman__leg {
+	height: 10px;
+	width: 2px;
+	border-radius: 1px;
+	background: currentColor;
+	position: absolute;
+	left: 50%;
+	top: 23px;
+	transform: translateX(-50%);
+	z-index: 2;
+}
+.hangman__leg--left {
+	margin-left: -3px;
+}
+.hangman__leg--right {
+	margin-left: 3px;
+}
+
+// WORD
+.app__word {
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+	font-size: 13px;
+	text-transform: uppercase;
+	text-align: center;
+	padding-top: 4px;
+}
+.app__letter {
+	width: 13px;
+	height: 16px;
+	border-bottom: 2px solid $color_hangman_active;
+	& + .app__letter {
+		margin-left: 2px;
+	}
+}
+.app__letter--ok {
+	color: $color_hangman_active;
+	border-bottom-color: $color_hangman;
+}
+
+
+// USER
+.app__user {
+	text-align: center;
+}
+.app__user-field {
+	position: relative;
+	display: flex;
+	align-items: center;
+	margin-left: 3px;
+	&::before {
+		content: 'Write a letter';
+		color: $color_hangman;
+		font-size: 7px;
+		text-transform: uppercase;
+		text-align: right;
+		width: 30px;
+		margin-right: 5px;
+		display: block;
+		line-height: 1.2;
+	}
+}
+.app__user-letter {
+	border: 1px solid $color_hangman;
+	background-color: $color_bg;
+	width: 15px;
+	padding: 2px 1px;
+	color: $color_hangman_active;
+	text-align: center;
+}
