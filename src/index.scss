@@ -23,14 +23,152 @@ body {
 
 // APP
 .app {
-	display: grid;
-	grid-template-columns: 35px 65px;
+	overflow: hidden;
 }
 .app__hangman {}
 .app__ui {
 	display: grid;
 	grid-template-rows: 1fr 1fr;
 	grid-gap: 4px;
+}
+
+
+// SCREENS
+.app__screen {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100px;
+	height: 50px;
+	background: $color_bg;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	transition: opacity ease .5s;
+	overflow: hidden;
+}
+.app__screen--active {
+	z-index: 2;
+	opacity: 1;
+}
+
+// SPLASH SCREEN
+.app__screen--splash {
+	display: block;
+}
+.app__title {
+	font-size: 11.8px;
+	margin: 0;
+	color: $color_hangman_active;
+	padding: 5px;
+	text-transform: uppercase;
+}
+.app__version {
+	color: $color_hangman;
+	position: absolute;
+	left: 5px;
+	bottom: 5px;
+	font-size: 8px;
+}
+.app__button {
+	border: 1px solid $color_hangman;
+	background-color: transparent;
+	color: $color_hangman_active;
+	cursor: pointer;
+	position: absolute;
+	bottom: 5px;
+	right: 5px;
+	text-transform: uppercase;
+	font-size: 8px;
+	transition: border-color ease .3s;
+	&:hover {
+		border-color: $color_hangman_active;
+	}
+}
+
+// GAME SCREEN
+.app__screen--game {
+	display: grid;
+	grid-template-columns: 35px 65px;
+	align-items: flex-start;
+}
+
+// OK SCREEN
+.app__screen--ok {
+	.hangman {
+		position: absolute;
+		left: 15px;
+		top: 0;
+	}
+	.app__screen-title {
+		font-size: 6px;
+		text-transform: uppercase;
+		position: absolute;
+		color: $color_hangman;
+		left: 26px;
+		top: 9px;
+		transform: rotate(-10deg);
+	}
+	.app__result {
+		font-size: 7px;
+		text-transform: uppercase;
+		position: absolute;
+		color: $color_hangman_active;
+		right: 5px;
+		top: 5px;
+		padding-left: 15px;
+		&::before {
+			content: '\f00c';
+			font-family: 'Font Awesome 5 Pro';
+			font-weight: 900;
+			color: $color_hangman_active;
+			font-size: 12px;
+			position: absolute;
+			left: 0;
+			top: 50%;
+			transform: translateY(-55%);
+		}
+	}
+}
+
+// KO SCREEN
+.app__screen--ko {
+	.hangman {
+		position: absolute;
+		left: 15px;
+		bottom: 38px;
+	}
+	.app__screen-title {
+		font-size: 6px;
+		text-transform: uppercase;
+		position: absolute;
+		color: $color_hangman;
+		left: 26px;
+		top: 13px;
+		transform: rotate(-10deg);
+	}
+	.app__result {
+		font-size: 7px;
+		text-transform: uppercase;
+		position: absolute;
+		color: $color_hangman;
+		right: 5px;
+		top: 5px;
+		padding-left: 12px;
+		&::before {
+			content: '\f00d';
+			font-family: 'Font Awesome 5 Pro';
+			font-weight: 900;
+			color: $color_hangman_active;
+			font-size: 12px;
+			position: absolute;
+			left: 0;
+			top: 50%;
+			transform: translateY(-55%);
+		}
+	}
 }
 
 // HANGMAN
@@ -154,7 +292,9 @@ body {
 	font-size: 13px;
 	text-transform: uppercase;
 	text-align: center;
-	padding-top: 4px;
+	margin: 0;
+	list-style: none;
+	padding: 4px 0 0;
 }
 .app__letter {
 	width: 13px;
