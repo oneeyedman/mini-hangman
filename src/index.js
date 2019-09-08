@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
 
-const version = 'v0.9.0';
+const version = 'v1.0.0';
 
 const DEFAULTWORDS = [
 	"rule",
@@ -16,7 +16,7 @@ const DEFAULTWORDS = [
 	"api",
 	"from"
 ];
-//const ENDPOINT = 'https://api.rand.fun/text/word';
+const ENDPOINT = 'https://api.rand.fun/text/word';
 
 function getRandomNumber(max) {
 	return Math.floor(Math.random() * max);
@@ -111,13 +111,6 @@ const GameScreen = props => {
 	);
 };
 
-const Screen = props => {
-	const {page, index, text, className, action} = props;
-	return (
-		<div className={`${className} ${(page === index) ? 'app__screen--active': ''}`} onClick={action}>{text}</div>
-	);
-};
-
 const SplashScreen = props => {
 	const {page, index, action} = props;
 	return (
@@ -134,7 +127,8 @@ class OkScreen extends React.Component {
 		const {page, index, action, word} = this.props;
 		return (
 			<div className={`app__screen app__screen--ok ${(page === index) ? 'app__screen--active': ''}`}>
-				<HangMan rope={true} tries={4} />
+				<HangMan rope={false} tries={0} />
+				<h2 className="app__screen-title">Yay!</h2>
 				<div className="app__result">Word: {word.join('')}</div>
 				<button className="app__button app__play" onClick={()=>{action(1)}} data-next={1}>Play Again</button>
 			</div>
@@ -147,7 +141,7 @@ class KoScreen extends React.Component {
 		const {page, index, action, word} = this.props;
 		return (
 			<div className={`app__screen app__screen--ko ${(page === index) ? 'app__screen--active': ''}`}>
-				<HangMan rope={false} tries={4} />
+				<HangMan rope={true} tries={4} />
 				<h2 className="app__screen-title">Loser!</h2>
 				<div className="app__result">Word: {word.join('')}</div>
 				<button className="app__button app__play" onClick={()=>{action(1)}} data-next={1}>Play Again</button>
@@ -199,14 +193,29 @@ class App extends React.Component {
 	}
 
 	startGame() {
-		const word = getRandomWord(DEFAULTWORDS).split("");
-		const hiddenWord = word.map(letter => '');
-		const totalLetters = word.length;
-		this.setState({
-			word: word,
-			hiddenWord: hiddenWord,
-			lettersLeft: totalLetters
-		});
+		const DEFAULTRANDOMWORDS = JSON.parse(localStorage.getItem('miniWords')) || DEFAULTWORDS;
+
+		fetch(ENDPOINT)
+			.then(response => response.json())
+			.then(data => {
+				let word;
+				if (data.result && data.result.length <= 4) {
+					if (!DEFAULTRANDOMWORDS.includes(data.result)) {
+						DEFAULTRANDOMWORDS.push(data.result);
+					}
+					word = data.result.split("");
+				} else {
+					word = getRandomWord(DEFAULTRANDOMWORDS).split("");
+				}
+				const hiddenWord = word.map(letter => '');
+				const totalLetters = word.length;
+				localStorage.setItem('miniWords', JSON.stringify(DEFAULTRANDOMWORDS));
+				this.setState({
+					word: word,
+					hiddenWord: hiddenWord,
+					lettersLeft: totalLetters
+				});
+			});
 	}
 
 	getUserKey(event) {

@@ -100,7 +100,7 @@ body {
 	.hangman {
 		position: absolute;
 		left: 15px;
-		top: 0;
+		bottom: 38px;
 	}
 	.app__screen-title {
 		font-size: 6px;
@@ -108,7 +108,7 @@ body {
 		position: absolute;
 		color: $color_hangman;
 		left: 26px;
-		top: 9px;
+		top: 12px;
 		transform: rotate(-10deg);
 	}
 	.app__result {
@@ -138,16 +138,16 @@ body {
 	.hangman {
 		position: absolute;
 		left: 15px;
-		bottom: 38px;
+		top: 0;
 	}
 	.app__screen-title {
 		font-size: 6px;
 		text-transform: uppercase;
 		position: absolute;
 		color: $color_hangman;
-		left: 26px;
+		left: 28px;
 		top: 13px;
-		transform: rotate(-10deg);
+		transform: rotate(-6deg);
 	}
 	.app__result {
 		font-size: 7px;
