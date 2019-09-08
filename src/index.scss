@@ -52,6 +52,7 @@ body {
 .app__screen--active {
 	z-index: 2;
 	opacity: 1;
+	overflow: hidden;
 }
 
 // SPLASH SCREEN

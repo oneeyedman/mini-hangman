@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
 
-const version = 'v1.0.0';
+const version = 'v1.0.2';
 
 const DEFAULTWORDS = [
 	"rule",
